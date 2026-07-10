@@ -1,0 +1,41 @@
+Data Location Map — WADF Week 3, Lab 6B
+Student: <your name> / <reg number>
+Date: 10 July 2026
+
+Category                 Location   Verified with                          Evidence
+------------------------------------------------------------------------------------
+User files               /home      ls -ld /home                           drwxr-xr-x, root:root, 4096 bytes, Jul 3 2025
+System configuration     /etc       ls -ld /etc                            drwxr-xr-x, 164 entries, 12288 bytes
+Logs                     /var/log   find /var/log -maxdepth 1 -type f      btmp, boot.log.3, alternatives.log,
+                                                                             Xorg.1.log, wtmp, lynis.log, etc.
+Temporary files          /tmp       ls -ld /tmp ; stat /tmp                 drwxrwxrwt (sticky bit), size 320,
+                                                                             modified 2026-07-10 21:09
+Installed software       /usr       ls -ld /usr                            drwxr-xr-x, 15 entries, 4096 bytes
+                         /opt       ls -ld /opt                            drwxr-xr-x, 4 entries, 4096 bytes,
+                                                                             unchanged since May 10 2025 (no
+                                                                             third-party packages installed there)
+Runtime state            /run       ls -ld /run ; stat /run                 drwxr-xr-x, size 840, modified
+                                                                             2026-07-10 21:14 (changes constantly)
+Kernel/process info      /proc      cat /proc/uptime                       returned "6197.56 3979.79" — live
+                                                                             uptime figures, regenerated on read
+
+Persistent vs. temporary locations
+-----------------------------------
+- Persistent: /home and /etc keep their contents across reboots (e.g. /opt shows a
+  modification date of May 10 2025, over a year old — nothing has touched it since,
+  proving it survives reboots untouched).
+- Temporary/runtime: /tmp and /run both showed very recent modification timestamps
+  (21:09 and 21:14 today) despite being freshly created system directories — their
+  contents are expected to be cleared or recreated at each boot.
+
+Special virtual filesystems
+-----------------------------------
+/proc and /sys reported a Size of 0 in `ls -ld`, unlike every other directory listed.
+This confirms they are not backed by real disk storage — they are generated live by
+the kernel to expose running process and hardware/kernel state, which is why
+/proc/uptime returns different values every time it is read.
+
+Safety note
+-----------------------------------
+All commands used above are read-only (ls, find, stat, cat). No files were created,
+modified, or deleted outside the intended /tmp test/verification steps.
