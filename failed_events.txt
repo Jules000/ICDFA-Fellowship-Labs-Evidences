@@ -1,0 +1,7 @@
+2026-07-12T08:00:01Z AUTH FAILED user=alice src=198.51.100.23 reason=bad_password
+2026-07-12T08:03:44Z AUTH FAILED user=unknown src=203.0.113.57 reason=invalid_user
+2026-07-12T08:04:10Z AUTH FAILED user=admin src=198.51.100.23 reason=bad_password
+2026-07-12T08:05:31Z AUTH FAILED user=admin src=198.51.100.23 reason=bad_password
+2026-07-12T08:08:27Z AUTH FAILED user=guest src=203.0.113.57 reason=bad_password
+2026-07-12T08:09:16Z AUTH FAILED user=guest src=203.0.113.57 reason=bad_password
+2026-07-12T08:11:58Z AUTH FAILED user=root src=192.0.2.99 reason=bad_password
