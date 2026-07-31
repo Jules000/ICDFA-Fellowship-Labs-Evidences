@@ -1,0 +1,381 @@
+# Week 6 Labs — Step-by-Step Typing & Screenshot Guide
+### Labs 25–28: Finding Files, Text Utilities, Regular Expressions, Vi Editor
+
+**How to use this guide:** Open your terminal. Type each command exactly as shown, press Enter, look at the output, then take a screenshot where indicated (📸). Keep every screenshot — you'll need them for your Week 6 submission.
+
+---
+
+## LAB 25: Finding Files
+
+### Setup
+```bash
+mkdir -p ~/find_test/documents ~/find_test/images ~/find_test/archives
+cd ~/find_test
+touch documents/report.txt documents/notes.txt documents/data.csv
+touch images/photo1.jpg images/photo2.jpg images/screenshot.png
+touch archives/backup.tar.gz archives/old_files.zip
+```
+```bash
+find ~/find_test -type f
+```
+📸 **Screenshot 1:** the directory/file listing above (shows your structure was created).
+
+### Search by name
+```bash
+find ~/find_test -name "*.txt"
+```
+📸 **Screenshot 2:** shows `report.txt` and `notes.txt`.
+
+### Case-insensitive search
+```bash
+find ~/find_test -iname "*.JPG"
+```
+(No separate screenshot required, but you can capture it — it shows the two `.jpg` files despite the uppercase pattern.)
+
+### Search by type
+```bash
+find ~/find_test -type d
+```
+📸 **Screenshot 3:** shows the 4 directories.
+
+### Search by size
+```bash
+find ~/find_test -size +1k
+```
+📸 **Screenshot 4:** shows files over 1KB (result may be empty if all test files are 0 bytes — that's fine, screenshot it anyway to document the command).
+
+### Search by modification time
+```bash
+find ~/find_test -mtime -1
+```
+📸 **Screenshot 5:** shows files modified in the last day (should be everything, since you just created them).
+
+### Search by permissions
+```bash
+find ~/find_test -perm 644
+```
+(Optional screenshot — capture if you want extra evidence.)
+
+### Combine criteria (AND)
+```bash
+find ~/find_test -type f -name "*.txt" -mtime -1
+```
+📸 **Screenshot 6:** shows combined-criteria result.
+
+### OR logic
+```bash
+find ~/find_test -name "*.txt" -o -name "*.csv"
+```
+
+### Execute a command on found files
+```bash
+find ~/find_test -name "*.txt" -exec wc -l {} \;
+```
+📸 **Screenshot 7:** shows line counts for each `.txt` file.
+
+### locate command
+```bash
+locate report.txt
+```
+📸 **Screenshot 8:** shows the locate result (if it returns nothing, run the next command first, then re-run this one and screenshot that).
+
+### Update locate database
+```bash
+sudo updatedb
+```
+*(You'll need your sudo password. No visible output is normal.)*
+
+---
+
+## LAB 26: Text Utilities
+
+### Setup
+```bash
+cat > ~/textutils_data.txt << 'EOF'
+John,Engineering,75000
+Sarah,Marketing,65000
+Mike,Engineering,72000
+Lisa,Sales,60000
+John,Engineering,75000
+EOF
+```
+```bash
+cat ~/textutils_data.txt
+```
+📸 **Screenshot 1:** shows the sample data file contents.
+
+### cut — single column
+```bash
+cut -d',' -f1 ~/textutils_data.txt
+```
+📸 **Screenshot 2:** shows just the names column.
+
+### cut — multiple columns
+```bash
+cut -d',' -f1,3 ~/textutils_data.txt
+```
+
+### sort — default
+```bash
+sort ~/textutils_data.txt
+```
+
+### sort — by column, numeric
+```bash
+sort -t',' -k3 -n ~/textutils_data.txt
+```
+📸 **Screenshot 3:** shows salaries sorted lowest to highest.
+
+### sort — reverse
+```bash
+sort -t',' -k3 -nr ~/textutils_data.txt
+```
+
+### uniq — remove duplicates
+```bash
+sort ~/textutils_data.txt | uniq
+```
+
+### uniq -c — count duplicates
+```bash
+sort ~/textutils_data.txt | uniq -c
+```
+📸 **Screenshot 4:** shows counts, with `John,Engineering,75000` showing count `2`.
+
+### tr — uppercase transform
+```bash
+tr 'a-z' 'A-Z' < ~/textutils_data.txt
+```
+📸 **Screenshot 5:** shows all-uppercase output.
+
+### tr -d — delete characters
+```bash
+tr -d ',' < ~/textutils_data.txt
+```
+
+### wc — full count
+```bash
+wc ~/textutils_data.txt
+```
+📸 **Screenshot 6:** shows lines/words/characters count (e.g. `5 15 95 ...`).
+
+### wc -l — lines only
+```bash
+wc -l ~/textutils_data.txt
+```
+
+### Bonus: a pipeline combining utilities (for your "pipeline" screenshot)
+```bash
+cut -d',' -f2 ~/textutils_data.txt | sort | uniq -c
+```
+📸 **Screenshot 7:** shows department names counted (this satisfies the "pipeline combining utilities" evidence item).
+
+---
+
+## LAB 27: Regular Expressions
+
+### Setup
+```bash
+cat > ~/regex_test.txt << 'EOF'
+The quick brown fox jumps over the lazy dog
+Email: john@example.com
+Phone: 555-1234
+Date: 2026-07-18
+Price: $99.99
+Username: user123
+Password: Pass@Word123
+EOF
+```
+```bash
+cat ~/regex_test.txt
+```
+📸 **Screenshot 1:** shows the sample text file.
+
+### Literal string match
+```bash
+grep "fox" ~/regex_test.txt
+```
+📸 **Screenshot 2:** shows the fox line.
+
+### Dot (.) metacharacter
+```bash
+grep "d.g" ~/regex_test.txt
+```
+📸 **Screenshot 3:** shows the dot metacharacter matching "dog".
+
+### Asterisk (*) and Plus (+) quantifiers
+```bash
+grep "fo*x" ~/regex_test.txt
+grep -E "fo+x" ~/regex_test.txt
+```
+📸 **Screenshot 4:** capture one or both of these (quantifiers).
+
+### Character classes
+```bash
+grep "[0-9]" ~/regex_test.txt
+```
+📸 **Screenshot 5:** shows all lines containing digits.
+
+### Negated character class
+```bash
+grep "[^0-9]" ~/regex_test.txt
+```
+
+### Start-of-line anchor
+```bash
+grep "^Email" ~/regex_test.txt
+```
+
+### End-of-line anchor
+```bash
+grep "dog$" ~/regex_test.txt
+```
+📸 **Screenshot 6:** capture either or both anchor commands together.
+
+### Email pattern match
+```bash
+grep -E "[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+" ~/regex_test.txt
+```
+📸 **Screenshot 7:** shows the matched email line.
+
+### Phone number pattern match
+```bash
+grep -E "[0-9]{3}-[0-9]{4}" ~/regex_test.txt
+```
+📸 **Screenshot 8:** shows the matched phone line.
+
+### Case-insensitive match
+```bash
+grep -i "password" ~/regex_test.txt
+```
+
+---
+
+## LAB 28: The Vi Editor
+
+### Setup (run this in the terminal, NOT inside vi)
+```bash
+cat > ~/vi_test.txt << 'EOF'
+This is line one
+This is line two
+This is line three
+This is line four
+This is line five
+EOF
+```
+
+### Open the file in vi
+```bash
+vi ~/vi_test.txt
+```
+📸 **Screenshot 1:** take this right after opening — shows the file content, the `~` on any empty lines, and the filename/status line at the bottom.
+
+### Navigate (these are keystrokes, typed with NO Enter key, while in command mode — don't press `i` first)
+Type these one at a time and watch the cursor move:
+- `j` (down), `k` (up), `h` (left), `l` (right)
+- `w` (next word), `b` (previous word)
+- `0` (start of line), `$` (end of line)
+- `G` (end of file), then `1G` (back to start)
+
+📸 **Screenshot 2:** take this while your cursor is somewhere in the middle of the file after moving around, to show navigation.
+
+### Enter insert mode and type text
+Press:
+```
+i
+```
+You'll see `-- INSERT --` at the bottom. Now type some new text, e.g.:
+```
+This is a new line I am adding.
+```
+📸 **Screenshot 3:** capture while `-- INSERT --` is showing and your new text is visible.
+
+### Exit insert mode
+Press:
+```
+Esc
+```
+
+### Delete text (in command mode)
+Position your cursor on a word, then try:
+```
+dw
+```
+Then try deleting a whole line:
+```
+dd
+```
+📸 **Screenshot 4:** take this immediately after `dd`, showing a line has disappeared.
+
+### Undo
+Press:
+```
+u
+```
+📸 (optional) capture this showing the deleted line restored.
+
+### Redo
+Press:
+```
+Ctrl+r
+```
+
+### Search for text
+Type:
+```
+/fox
+```
+then press Enter. (Note: your practice file doesn't contain "fox" — for this step, either search for a word that IS in your file, e.g. `/line`, or add the word "fox" into the file first with `i`, `Esc`.)
+📸 **Screenshot 5:** shows the cursor jumped to the matched word, highlighted.
+
+Press `n` to go to the next match.
+
+### Search and replace
+Type exactly:
+```
+:%s/line/LINE/g
+```
+then press Enter.
+📸 **Screenshot 6:** shows every "line" replaced with "LINE" in the file.
+
+### Save the file
+Type:
+```
+:w
+```
+then press Enter.
+📸 **Screenshot 7:** shows the "written" confirmation message at the bottom of the screen.
+
+### Save and quit
+Type:
+```
+:wq
+```
+then press Enter.
+📸 **Screenshot 8:** take this right after — shows you're back at the normal shell prompt.
+
+### (For documentation only — do this separately, don't do it right after saving real work)
+To practice quitting without saving:
+```bash
+vi ~/vi_test.txt
+```
+Make a small edit with `i`, type something, press `Esc`, then type:
+```
+:q!
+```
+and press Enter. This discards the edit and exits.
+
+---
+
+## Final Wrap-Up (applies to all 4 labs)
+
+1. Create a folder called `Week6_Labs_YourName`.
+2. Put all your screenshots inside it, named clearly (e.g. `Lab25_Screenshot1.png`, `Lab26_Screenshot3.png`, etc.).
+3. Add the files you created during the labs (`textutils_data.txt`, `regex_test.txt`, `vi_test.txt`, and the `find_test` folder).
+4. Write a `README.md` inside that folder with:
+   - Your name and student ID
+   - What you learned in each lab (1–2 sentences each)
+   - Any problems you ran into and how you fixed them
+   - A short list of key commands and what they do
+5. Compress the whole folder into a `.zip` or `.tar.gz`.
+6. Submit before **July 31, 2026, 23:59 WAT**.
